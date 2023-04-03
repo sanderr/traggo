@@ -35,9 +35,17 @@ type DashboardEntry struct {
 	RangeID     int
 	RangeFrom   string
 	RangeTo     string
+	IncludeTags DashboardTagFilter[]
+	EncludeTags DashboardTagFilter[]
 
 	MobilePosition  string
 	DesktopPosition string
+}
+
+type DashboardTagFilter struct {
+	DashboardEntryID int `gorm:"type:int REFERENCES dashboard_entries(id) ON DELETE CASCADE"`
+	Key              string
+	Value            string
 }
 
 // DashboardType the dashboard type

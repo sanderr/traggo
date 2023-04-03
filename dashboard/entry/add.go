@@ -25,14 +25,18 @@ func (r *ResolverForEntry) AddDashboardEntry(ctx context.Context, dashboardID in
 	}
 
 	entry := model.DashboardEntry{
-		Keys:            strings.Join(stats.Tags, ","),
-		Type:            convert.InternalEntryType(entryType),
-		Title:           title,
-		DashboardID:     dashboardID,
-		Interval:        convert.InternalInterval(stats.Interval),
-		MobilePosition:  convert.EmptyPos(),
-		DesktopPosition: convert.EmptyPos(),
-		RangeID:         -1,
+		Keys:             strings.Join(stats.Tags, ","),
+		Type:             convert.InternalEntryType(entryType),
+		Title:            title,
+		DashboardEntryID: dashboardID,
+		Interval:         convert.InternalInterval(stats.Interval),
+		IncludeTags:      DashboardTagFilter{
+                    Key: 
+                },
+		ExcludeTags:      stats.ExcludeTags,
+		MobilePosition:   convert.EmptyPos(),
+		DesktopPosition:  convert.EmptyPos(),
+		RangeID:          -1,
 	}
 
 	if len(stats.Tags) == 0 {
