@@ -5,10 +5,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/NativeSelect/NativeSelect';
 import {EntryType, StatsInterval} from '../../gql/__generated__/globalTypes';
 import {TagKeySelector} from '../../tag/TagKeySelector';
+import {TagSelector} from '../../tag/TagSelector';
+import {toInputTags, toTagSelectorEntry} from '../../tag/tagSelectorEntry';
 import {Dashboards_dashboards_items, Dashboards_dashboards_items_statsSelection_range} from '../../gql/__generated__/Dashboards';
 import {RelativeDateTimeSelector} from '../../common/RelativeDateTimeSelector';
 import {parseRelativeTime} from '../../utils/time';
 import {Grid, Typography, Switch} from '@material-ui/core';
+import {useQuery} from '@apollo/react-hooks';
+import {Tags, Tags_tags} from '../../gql/__generated__/Tags';
+import * as gqlTags from '../../gql/tags';
 
 interface EditPopupProps {
     entry: Dashboards_dashboards_items;
@@ -30,6 +35,11 @@ export const isValidDashboardEntry = (item: Dashboards_dashboards_items): boolea
 };
 export const DashboardEntryForm: React.FC<EditPopupProps> = ({entry, onChange: setEntry, disabled = false, ranges}) => {
     const [staticRange, setStaticRange] = React.useState(!entry.statsSelection.rangeId);
+    const tagsResult = useQuery<Tags>(gqlTags.Tags);
+    if (tagsResult.error || tagsResult.loading || !tagsResult.data) {
+        return null;
+    }
+    const defined_tags: Tags_tags[] = tagsResult.data.tags || [];
 
     const range: Dashboards_dashboards_items_statsSelection_range = entry.statsSelection.range
         ? entry.statsSelection.range
@@ -168,6 +178,18 @@ export const DashboardEntryForm: React.FC<EditPopupProps> = ({entry, onChange: s
                 disabled={disabled}
                 onChange={(tags) => {
                     entry.statsSelection.tags = tags;
+                    setEntry(entry);
+                }}
+            />
+            <TagSelector
+                selectedEntries={toTagSelectorEntry(defined_tags, entry.statsSelection.includeTags || [])}
+                onSelectedEntriesChanged={(tags) => {
+                    entry.statsSelection.includeTags = toInputTags(tags).map(tag => {
+                        return {
+                            ...tag,
+                            __typename: 'TimeSpanTag',
+                        }
+                    });
                     setEntry(entry);
                 }}
             />

@@ -10,6 +10,7 @@ import * as gqlDashboard from '../../gql/dashboard';
 import {UpdateDashboardEntry, UpdateDashboardEntryVariables} from '../../gql/__generated__/UpdateDashboardEntry';
 import {Fade} from '../../common/Fade';
 import {DashboardEntryForm, isValidDashboardEntry} from './DashboardEntryForm';
+import {stripTypename} from '../../utils/strip';
 
 interface EditPopupProps {
     entry: Dashboards_dashboards_items;
@@ -66,6 +67,8 @@ export const EditPopup: React.FC<EditPopupProps> = ({entry, anchorEl, onChange: 
                                             title: entry.title,
                                             stats: {
                                                 tags: entry.statsSelection.tags,
+                                                includeTags: stripTypename(entry.statsSelection.includeTags),
+                                                excludeTags: stripTypename(entry.statsSelection.excludeTags),
                                                 interval: entry.statsSelection.interval,
                                                 range: entry.statsSelection.range
                                                     ? {

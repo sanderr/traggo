@@ -52,6 +52,8 @@ const SpecificDashboardEntry: React.FC<{entry: Dashboards_dashboards_items; rang
                 range,
                 interval,
                 tags: entry.statsSelection.tags,
+                includeTags: entry.statsSelection.includeTags,
+                excludeTags: entry.statsSelection.excludeTags,
             },
         },
     });
